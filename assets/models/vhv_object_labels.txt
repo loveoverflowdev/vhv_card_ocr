@@ -1,0 +1,10 @@
+id
+name
+birdthday
+birdplace
+dayIn
+dayOri
+rePlace
+reDay
+image
+sex

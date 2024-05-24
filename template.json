@@ -1,0 +1,42 @@
+{
+    "app": {
+        "initial_page": "home",
+        "pages": [
+            "home",
+            "about",
+            "contact",
+            "about"
+        ],
+        "page_details": {
+            "about": {
+                "title": "about",
+                "tiles": {
+                    "about": "about",
+                    "contact": "contact"
+                }
+            },
+            "task": {
+                "title": "tasks",
+                "tab_details": {
+                    "in_progress": {
+                        "title": "in progress"
+                    },
+                    "done": "done",
+                    "all": "all"
+                },
+                "tabs": [
+                    "in_progress",
+                    "done",
+                    "all"
+                ]
+            },
+            "home": {
+                "app_bar": {
+                    "title": "Home"
+                }
+            }
+        },
+        "theme": "time_new_roman",
+        "title": "Time New Roman"
+    }
+}
