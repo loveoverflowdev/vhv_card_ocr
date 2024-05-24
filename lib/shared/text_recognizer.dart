@@ -66,11 +66,10 @@ Future<Map<String, dynamic>> _callVhvOcrPassZip({
   final response = await dio.post(url, data: {
     "zipUrl": zipUrl,
     "token": "ai_team_vhv",
-    "numThreads": 4,
+    // "numThreads": 4,
   });
   return response.data;
 }
-
 
 Future<String> _callVhvOcr({
   required String imageUrl,
