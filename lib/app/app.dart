@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vision/flutter_vision.dart';
+// import 'package:flutter_vision/flutter_vision.dart';
 
 import '../modules/object_detection/cubits/cubits.dart';
 import '../modules/object_detection/object_detection.dart';
@@ -11,7 +11,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ObjectDetectionCubit(vision: FlutterVision()),
+      create: (context) => ObjectDetectionCubit(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter VHV Card OCR Demo',

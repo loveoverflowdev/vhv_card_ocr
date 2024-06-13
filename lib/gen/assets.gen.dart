@@ -13,11 +13,11 @@ class $AssetsModelsGen {
   /// File path: assets/models/vhv_object_labels.txt
   String get vhvObjectLabels => 'assets/models/vhv_object_labels.txt';
 
-  /// File path: assets/models/vhv_yolov8.tflite
-  String get vhvYolov8 => 'assets/models/vhv_yolov8.tflite';
+  /// File path: assets/models/vhv_yolo8.tflite
+  String get vhvYolo8 => 'assets/models/vhv_yolo8.tflite';
 
   /// List of all assets
-  List<String> get values => [vhvObjectLabels, vhvYolov8];
+  List<String> get values => [vhvObjectLabels, vhvYolo8];
 }
 
 class Assets {

@@ -30,8 +30,8 @@ class AuthSessionConfig {
   }
 
   void _initDomainSite() {
-    _site = '2001774';
-    _domain = 'k12home2.coquan.vn';
+    _site = '2006644';
+    _domain = 'vustavinhphuc.coquan.vn';
   }
 
   void _loadSecurityToken() async {

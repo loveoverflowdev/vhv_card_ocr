@@ -1,25 +1,20 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'dart:io';
-import 'dart:typed_data';
 
+// import 'package:firebase_ml_model_downloader/firebase_ml_model_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_vision/flutter_vision.dart';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
-import 'package:vhv_card_ocr/gen/assets.gen.dart';
 import 'package:image/image.dart' as img;
+import 'package:vhv_card_ocr/gen/assets.gen.dart';
 
 import 'object_detection_state.dart';
+import 'yolov8_object_detection.dart';
 
 class ObjectDetectionCubit extends Cubit<ObjectDetectionState> {
-  final FlutterVision _vision;
-  late final Future<String> _appDirPath;
-  late final Uuid _uuid;
   late final List<VoidCallback> _removeFileTasks;
+  late final Yolov8ObjectDetection _objectDetection;
 
   String _vietsubLabel(String label) {
     switch (label) {
@@ -37,63 +32,32 @@ class ObjectDetectionCubit extends Cubit<ObjectDetectionState> {
     }
   }
 
-  ObjectDetectionCubit({
-    required FlutterVision vision,
-  }) : _vision = vision, super(const ObjectDetectionState()) {
-    loadYoloModel(labelsFilePath: Assets.models.vhvObjectLabels, modelPath: Assets.models.vhvYolov8,modelVersion: 'yolov8');
-
-    _getAppPath();
-
-    _uuid = const Uuid();
-    _removeFileTasks = [];
-  }
-
-  void _getAppPath() async {
-    _appDirPath = getApplicationDocumentsDirectory().then((value) => value.path);
-  }
-
-  // Future<String> _createUniqueFilePath({
-  //   final String suffix = '',
-  // }) async {
-  //   return '${await _appDirPath}/${_uuid.v4()}$suffix';
-  // }
-
-  void loadYoloModel({
-    required String labelsFilePath,
-    required String modelPath,
-    String modelVersion = 'yolov5',
-    bool quantization = false,
-    int numThreads = 4,
-    bool useGpu = true,
-  }) {
-    
-    _vision.loadYoloModel(
-      labels: labelsFilePath,
-      modelPath: modelPath,
-      modelVersion: modelVersion,
-      quantization: quantization,
-      numThreads: numThreads,
-      useGpu: useGpu,
+  ObjectDetectionCubit() : super(const ObjectDetectionState()) {
+    _objectDetection = Yolov8ObjectDetection(
+      modelPath: Assets.models.vhvYolo8, 
+      labelPath: Assets.models.vhvObjectLabels,
     );
   }
 
-  @override
-  Future<void> close() async {
-    for (var task in _removeFileTasks) {
-      task();
-    }
-    await _vision.closeTesseractModel();
-    await _vision.closeYoloModel();
-    return super.close();
-  }
-
   Future<void> detectObject() async {
+    if (state.imageFile == null) {
+      return;
+    }
+
     emit(state.loading());
 
     debugPrint('DECODING IMAGE ...');
 
-    Uint8List bytes = await state.imageFile!.readAsBytes();
-    final image = await decodeImageFromList(bytes);
+    final img.Image? image = await state.imageFile!
+      .readAsBytes()
+      .then((value) => img.decodeJpg(value));
+
+    if (image == null) {
+      return emit(state.copyWith(
+        detectionStatus: ObjectDetectionStatus.error,
+        errorMessage: 'Failed to decode image after picking.'
+      ));
+    }
 
     final imageHeight = image.height;
     final imageWidth = image.width;
@@ -102,19 +66,12 @@ class ObjectDetectionCubit extends Cubit<ObjectDetectionState> {
 
     final stopwatch = Stopwatch()..start();
 
+    final boxes = await _objectDetection.analyseImage(image);
+
     try {
-      final results = await _vision.yoloOnImage(
-          bytesList: bytes,
-          imageHeight: image.height,
-          imageWidth: image.width,
-          iouThreshold: 0.8,
-          confThreshold: 0.4,
-          classThreshold: 0.5,
-      );
+      final List<Map<String, dynamic>> results = [];
 
-      final labeledImageResults = cropImage(bytes, objectDetectionResults: results);
-
-      
+      final labeledImageResults = cropImage(image, detectedBoxes: boxes ?? []);
 
       debugPrint('DETECTING OBJECT DONE !');
 
@@ -148,48 +105,39 @@ class ObjectDetectionCubit extends Cubit<ObjectDetectionState> {
     final XFile? photo = await picker.pickImage(source: ImageSource.gallery);
 
     if (photo != null) {
-      // final decodedPhoto = img.decodeImage(await photo.readAsBytes())!;
-      // final resizedPhoto = img.copyResize(decodedPhoto, height: 1920, width: decodedPhoto.width * 1920 ~/ decodedPhoto.height);
-      // final resizedPhotoFile = await File(await _createUniqueFilePath(suffix: '.png')).writeAsBytes(img.encodePng(resizedPhoto));
-
-      // emit(state.copyWith(imageFile: resizedPhotoFile));
-
-      // _removeFileTasks.add(() { resizedPhotoFile.delete(); });
-
       emit(state.copyWith(imageFile: File(photo.path)));
     }
-
-    
   }
 
   List<MapEntry<String, img.Image>> cropImage(
-  Uint8List src, {
-    required List<Map<String, dynamic>> objectDetectionResults,
+    img.Image image, {
+    required List<BoundingBox> detectedBoxes,
   }) {
-    final img.Image srcImage = img.decodeImage(src)!;
 
     final List<MapEntry<String, img.Image>> croppedImageList = [];
 
-    for (final result in objectDetectionResults) {
-      if (result['tag'] == 'sex') continue;
+    for (final box in detectedBoxes) {
+      if (box.clsName == 'sex') {
+        continue;
+      }
 
-      final x = result["box"][0].round();
-      final y = result["box"][1].round();
-      final width = (result["box"][2] - result["box"][0]).round();
-      final height = (result["box"][3] - result["box"][1]).round();
+      final x = box.x1 * image.width;
+      final y = box.y1 * image.height;
+      final width = box.w * image.width;
+      final height = box.h * image.height;
 
       if (width == 0 || height == 0) continue;
-      final widthPad = (width * 0.05).round();
-      final heightPad = (height * 0.05).round();
+      final widthPad = width * 0.05;
+      final heightPad = height * 0.05;
       final croppedImage =
-          img.copyCrop(srcImage, x: x - widthPad, y: y - heightPad, width: width + widthPad, height: height + heightPad);
+          img.copyCrop(
+            image, x: (x - widthPad).round(), 
+            y: (y - heightPad).round(), 
+            width: (width + widthPad).round(), 
+            height: (height + heightPad).round(),
+          );
 
-      croppedImageList.add(MapEntry(result['tag'], croppedImage));
-      // left: result["box"][0] * factorX,
-      // top: result["box"][1] * factorY + pady,
-      // width: (result["box"][2] - result["box"][0]) * factorX,
-      // height: (result["box"][3] - result["box"][1]) * factorY,
-      //
+      croppedImageList.add(MapEntry(box.clsName, croppedImage));
     }
 
     return croppedImageList;

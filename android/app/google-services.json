@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "108974411659",
+    "project_id": "stdv-vtv",
+    "storage_bucket": "stdv-vtv.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108974411659:android:245e1f33bab6880e85298e",
+        "android_client_info": {
+          "package_name": "com.example.vhv_card_ocr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108974411659-ou1i5c5va72ftp6h9qmgaqnp7rks9hgc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP_bY73hPTGVm4u8AI0rK4R-gxz3gUuxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108974411659-ou1i5c5va72ftp6h9qmgaqnp7rks9hgc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "108974411659-gdd6m3npcelt6psrbn98ilhdp81qfn4m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "vn.sotaydangvien.vtv"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108974411659:android:4733cc8a94401c8285298e",
+        "android_client_info": {
+          "package_name": "vn.sotaydangvien.vtv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108974411659-ou1i5c5va72ftp6h9qmgaqnp7rks9hgc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP_bY73hPTGVm4u8AI0rK4R-gxz3gUuxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108974411659-ou1i5c5va72ftp6h9qmgaqnp7rks9hgc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "108974411659-gdd6m3npcelt6psrbn98ilhdp81qfn4m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "vn.sotaydangvien.vtv"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
