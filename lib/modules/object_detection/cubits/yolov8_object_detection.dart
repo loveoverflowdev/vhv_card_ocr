@@ -88,7 +88,7 @@ class Yolov8ObjectDetection {
     final inputSensor = interpreter.getInputTensor(0);
     final outputSensor = interpreter.getOutputTensor(0);
 
-    //
+    // 
     final outputBatchSize = outputSensor.shape[0];
 
     //
