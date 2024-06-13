@@ -102,6 +102,7 @@ class Yolov8ObjectDetection {
       image,
       width: inputWidth,
       height: inputHeight,
+      maintainAspect: true,
     );
 
     final imageMatrix = List.generate(
