@@ -10,6 +10,12 @@
 class $AssetsModelsGen {
   const $AssetsModelsGen();
 
+  /// File path: assets/models/corner_float16.tflite
+  String get cornerFloat16 => 'assets/models/corner_float16.tflite';
+
+  /// File path: assets/models/corner_float16_labels.txt
+  String get cornerFloat16Labels => 'assets/models/corner_float16_labels.txt';
+
   /// File path: assets/models/vhv_object_labels.txt
   String get vhvObjectLabels => 'assets/models/vhv_object_labels.txt';
 
@@ -17,7 +23,8 @@ class $AssetsModelsGen {
   String get vhvYolo8 => 'assets/models/vhv_yolo8.tflite';
 
   /// List of all assets
-  List<String> get values => [vhvObjectLabels, vhvYolo8];
+  List<String> get values =>
+      [cornerFloat16, cornerFloat16Labels, vhvObjectLabels, vhvYolo8];
 }
 
 class Assets {

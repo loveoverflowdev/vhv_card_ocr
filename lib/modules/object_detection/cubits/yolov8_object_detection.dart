@@ -102,7 +102,7 @@ class Yolov8ObjectDetection {
       image,
       width: inputWidth,
       height: inputHeight,
-      maintainAspect: true,
+      // maintainAspect: true,
     );
 
     final imageMatrix = List.generate(
@@ -131,7 +131,7 @@ class Yolov8ObjectDetection {
       array: outputMatrix.flatten(), 
       numElements: numberElements, 
       numChannel: numChannels, 
-      confidenceThreshold: 0.5, 
+      confidenceThreshold: 0.1, 
       labels: labels,
     );
 
@@ -211,7 +211,7 @@ List<BoundingBox>? bestBox({
 
   if (boundingBoxes.isEmpty) return null;
 
-  return applyNMS(boundingBoxes, 0.7);
+  return applyNMS(boundingBoxes, 0.5);
 }
 
 List<BoundingBox> applyNMS(List<BoundingBox> boxes, double iouThreshold) {

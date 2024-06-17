@@ -13,29 +13,12 @@ import 'object_detection_state.dart';
 import 'yolov8_object_detection.dart';
 
 class ObjectDetectionCubit extends Cubit<ObjectDetectionState> {
-  late final List<VoidCallback> _removeFileTasks;
   late final Yolov8ObjectDetection _objectDetection;
-
-  String _vietsubLabel(String label) {
-    switch (label) {
-      case 'id': return 'Mã số';
-      case 'name': return 'Tên';
-      case 'birdthday': return 'Ngày sinh';
-      case 'birdplace': return 'Nơi sinh';
-      case 'dayIn': return 'Ngày vào';
-      case 'dayOri': return 'Chính thức ngày';
-      case 'rePlace': return 'Nơi cấp';
-      case 'reDay': return 'Ngày cấp';
-      case 'image': return 'Ảnh';
-      case 'sex': return 'Giới tính';
-      default: return label;
-    }
-  }
 
   ObjectDetectionCubit() : super(const ObjectDetectionState()) {
     _objectDetection = Yolov8ObjectDetection(
-      modelPath: Assets.models.vhvYolo8, 
-      labelPath: Assets.models.vhvObjectLabels,
+      modelPath: Assets.models.cornerFloat16, 
+      labelPath: Assets.models.cornerFloat16Labels,
     );
   }
 
@@ -50,7 +33,7 @@ class ObjectDetectionCubit extends Cubit<ObjectDetectionState> {
 
     final img.Image? image = await state.imageFile!
       .readAsBytes()
-      .then((value) => img.decodeJpg(value));
+      .then((value) => img.decodeImage(value));
 
     if (image == null) {
       return emit(state.copyWith(
@@ -81,7 +64,7 @@ class ObjectDetectionCubit extends Cubit<ObjectDetectionState> {
         imageHeight: imageHeight,
         imageWidth: imageWidth,
         labeledImageResuls: 
-          labeledImageResults.map((e) => MapEntry(_vietsubLabel(e.key), e.value)).toList(),
+          labeledImageResults,
       ));
     } on Exception catch (error) {
 
